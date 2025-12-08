@@ -37,7 +37,13 @@ d3.csv("./data/Tonnage_Decheterie.csv").then(function (data) {
     console.log("Filtered rows:", cleanData.length);
     console.log("Sample filtered:", cleanData.slice(0, 3));
 
-    color.domain([0, 10000]);
+    const minVal = d3.min(cleanData, d => parseFloat(d.TONNAGE_T.replace(",", ".")));
+    const maxVal = d3.max(cleanData, d => parseFloat(d.TONNAGE_T.replace(",", ".")));
+
+    console.log("Min tonnage:", minVal);
+    console.log("Max tonnage:", maxVal);
+
+    color.domain([minVal, maxVal]);
 
     d3.json("./data/departements-version-simplifiee.geojson").then(function (json) {
 
