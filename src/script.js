@@ -26,27 +26,40 @@ let anneeChoisie = "2011";
 
 // Chargement des donnees
 d3.csv("./data/Tonnage_Decheterie.csv").then(function (data) {
+    console.log("CSV rows:", data.length);
+    console.log("First row:", data[0]);
+
     const cleanData = data.filter(row =>
         row.L_TYP_REG_DECHET === "DEEE" &&
         row.ANNEE === anneeChoisie
     );
 
+    console.log("Filtered rows:", cleanData.length);
+    console.log("Sample filtered:", cleanData.slice(0, 3));
+
     color.domain([0, 10000]);
 
     d3.json("./data/departements-version-simplifiee.geojson").then(function (json) {
 
+        console.log("GeoJSON features:", json.features.length);
+        console.log("First feature:", json.features[0].properties);
+
         for (let j = 0; j < json.features.length; j++) {
             const departement = json.features[j].properties.code;
+
             const anneeDepChoisi = cleanData.find(row =>
-                row.COD_DEP === departement
+                row.C_DEPT === departement
             );
 
             if (anneeDepChoisi) {
-                json.features[j].properties.value = parseFloat(anneeDepChoisi.TONNAGE_T);
+                json.features[j].properties.value =
+                    parseFloat(anneeDepChoisi.TONNAGE_T.replace(",", "."));
             } else {
                 json.features[j].properties.value = 0;
             }
         }
+
+        console.log("Example merged value:", json.features[0].properties.value);
 
         g.selectAll("path")
             .data(json.features)
@@ -58,5 +71,7 @@ d3.csv("./data/Tonnage_Decheterie.csv").then(function (data) {
                 const v = d.properties.value;
                 return v ? color(v) : "#ccc";
             });
+
+        console.log("Rendered paths:", document.querySelectorAll("path").length);
     });
 });
