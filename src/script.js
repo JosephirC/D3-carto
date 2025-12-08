@@ -22,14 +22,41 @@ const color = d3
 
 const path = d3.geoPath().projection(projection);
 
-// Chargement des donnees
-d3.json("./data/departements-version-simplifiee.geojson").then(function (geojson) {
+let anneeChoisie = "2011";
 
-    g.selectAll("path")
-        .data(geojson.features)
-        .join("path")
-        .attr("d", path)
-        .attr("fill", "#dcdcdc")
-        .attr("stroke", "white")
-        .attr("stroke-width", 0.5);
+// Chargement des donnees
+d3.csv("./data/Tonnage_Decheterie.csv").then(function (data) {
+    const cleanData = data.filter(row =>
+        row.L_TYP_REG_DECHET === "DEEE" &&
+        row.ANNEE === anneeChoisie
+    );
+
+    color.domain([0, 10000]);
+
+    d3.json("./data/departements-version-simplifiee.geojson").then(function (json) {
+
+        for (let j = 0; j < json.features.length; j++) {
+            const departement = json.features[j].properties.code;
+            const anneeDepChoisi = cleanData.find(row =>
+                row.COD_DEP === departement
+            );
+
+            if (anneeDepChoisi) {
+                json.features[j].properties.value = parseFloat(anneeDepChoisi.TONNAGE_T);
+            } else {
+                json.features[j].properties.value = 0;
+            }
+        }
+
+        g.selectAll("path")
+            .data(json.features)
+            .join("path")
+            .attr("d", path)
+            .attr("stroke", "white")
+            .attr("stroke-width", 0.5)
+            .attr("fill", d => {
+                const v = d.properties.value;
+                return v ? color(v) : "#ccc";
+            });
+    });
 });
