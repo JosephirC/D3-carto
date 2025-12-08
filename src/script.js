@@ -24,6 +24,9 @@ const path = d3.geoPath().projection(projection);
 
 let anneeChoisie = "2011";
 
+const tooltip = d3
+    .select("#tooltip")
+
 // Chargement des donnees
 d3.csv("./data/Tonnage_Decheterie.csv").then(function (data) {
     console.log("CSV rows:", data.length);
@@ -76,6 +79,20 @@ d3.csv("./data/Tonnage_Decheterie.csv").then(function (data) {
             .attr("fill", d => {
                 const v = d.properties.value;
                 return v ? color(v) : "#ccc";
+            })
+            .on("mouseover", function (event, d) {
+                const [x, y] = d3.pointer(event);
+                tooltip
+                    .classed("hidden", false)
+                    .style("left", (x + 15) + "px")
+                    .style("top", (y - 20) + "px")
+                    .html(
+                        `<strong>${d.properties.nom}</strong><br>
+                        ${d.properties.value.toFixed(2)} tonnes`
+                    );
+            })
+            .on("mouseout", function () {
+                tooltip.classed("hidden", true);
             });
 
         console.log("Rendered paths:", document.querySelectorAll("path").length);

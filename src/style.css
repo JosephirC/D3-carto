@@ -6,3 +6,18 @@ body {
     bottom: 0;
     left: 0;
 }
+
+.hidden {
+    display: none;
+}
+
+.tooltip {
+    position: absolute;
+    background: white;
+    border: 1px solid #aaa;
+    padding: 4px 8px;
+    font-size: 12px;
+    pointer-events: none;
+    opacity: 0.9;
+    border-radius: 3px;
+}
