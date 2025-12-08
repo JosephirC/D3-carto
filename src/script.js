@@ -2,7 +2,7 @@ const width = 700;
 const height = 580;
 
 const svg = d3
-    .select("body")
+    .select("#map-container")
     .append("svg")
     .attr("width", width)
     .attr("height", height);
@@ -64,44 +64,92 @@ d3.csv("./data/Tonnage_Decheterie.csv").then(function (data) {
     });
 });
 
+// Légende des couleurs
+const legendWidth = 260;
+const legendHeight = 12;
+
+const legendContainer = d3.select("#map-container")
+    .append("div")
+    .attr("id", "legend-container");
+
+const legendSvg = legendContainer
+    .append("svg")
+    .attr("width", legendWidth)
+    .attr("height", 40);
+
+legendContainer.append("div")
+    .style("margin-top", "6px")
+    .html("Tonnage de déchets DEEE (en tonnes)");
+
+const legendScale = d3.scaleLinear().range([0, legendWidth]);
+const legendAxis = legendSvg.append("g").attr("transform", "translate(0,20)");
+
+function updateLegend(minVal, maxVal) {
+    legendSvg.selectAll("*").remove();
+
+    const gradient = legendSvg.append("defs")
+        .append("linearGradient")
+        .attr("id", "legendGradient");
+
+    const colors = color.range();
+    colors.forEach((c, i) => {
+        gradient.append("stop")
+            .attr("offset", `${(i / (colors.length - 1)) * 100}%`)
+            .attr("stop-color", c);
+    });
+
+    legendSvg.append("rect")
+        .attr("width", legendWidth)
+        .attr("height", legendHeight)
+        .attr("fill", "url(#legendGradient)");
+
+    legendScale.domain([minVal, maxVal]);
+    legendAxis.call(
+        d3.axisBottom(legendScale)
+            .ticks(5)
+            .tickFormat(d => d.toFixed(0))
+    );
+}
+
 function drawMap(year) {
-    console.log("drawMap for year: ", year);
     const values = [];
 
     for (let f of geojson.features) {
-
-        const ligne = f.properties.series.find(s =>
-            s.annee === year
-        );
-
+        const ligne = f.properties.series.find(s => s.annee === year);
         f.properties.value = ligne ? ligne.valeur : 0;
-
         if (ligne) values.push(ligne.valeur);
     }
 
-    color.domain([d3.min(values), d3.max(values)]);
+    const minVal = d3.min(values);
+    const maxVal = d3.max(values);
 
+    color.domain([minVal, maxVal]);
+    updateLegend(minVal, maxVal);
+
+    // Animation + mise à jour
     g.selectAll("path")
         .data(geojson.features)
         .join("path")
+        .transition()
+        .duration(600)
         .attr("d", path)
         .attr("stroke", "white")
         .attr("stroke-width", 0.5)
-        .attr("fill", d => d.properties.value ? color(d.properties.value) : "#ccc")
-        .on("mouseover", function (event, d) {
-            const [x, y] = d3.pointer(event);
+        .attr("fill", d => d.properties.value ? color(d.properties.value) : "#ccc");
+
+    // Tooltip
+    g.selectAll("path")
+        .on("mousemove", function (event, d) {
             tooltip
                 .classed("hidden", false)
-                .style("left", (x + 15) + "px")
-                .style("top", (y - 20) + "px")
-                .html(
-                    `<strong>${d.properties.nom}</strong><br>
-                     ${d.properties.value.toFixed(2)} tonnes`
-                );
+                .style("left", (event.pageX + 20) + "px")
+                .style("top", (event.pageY - 60) + "px")
+                .html(`
+                    <strong>${d.properties.nom}</strong><br>
+                    ${d.properties.value.toFixed(2)} tonnes
+                `);
         })
-        .on("mouseout", function () {
-            tooltip.classed("hidden", true);
-        });
+        .on("mouseout", () => tooltip.classed("hidden", true));
 }
 
 // Listener du slider

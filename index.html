@@ -1,28 +1,38 @@
 <!DOCTYPE html>
+<html lang="fr">
 
 <head>
-
   <meta charset="utf-8" />
   <script src="https://d3js.org/d3.v7.min.js"></script>
-  <title>Cartography visualisation D3.js</title>
+  <title>TP3 DataViz – Données spatiales D3.js</title>
 
   <!-- Style du projet -->
   <link rel="stylesheet" href="./src/style.css">
-
 </head>
 
 <body>
+  <!-- Header -->
+  <header>
+    <h1>TP3 DataViz : Données spatiales avec D3.js</h1>
+    <h2>Université Lyon 1 — Master 2 — 2025-2026</h2>
+    <p class="authors">Youssef Abida (p2024398) — Nathan Corroler (p2208035)</p>
+  </header>
+
   <!-- Slider temporel -->
   <div id="controls">
     <input id="slider" type="range" min="0" max="6" value="0" step="1" />
     <br />
     <span id="day">2009</span>
+  </div>
 
-    <!-- Tooltip -->
-    <div id="tooltip" class="hidden tooltip"></div>
+  <!-- Carte D3 -->
+  <div id="map-container"></div>
 
-    <!-- Script du projet -->
-    <script src="./src/script.js"></script>
+  <!-- Tooltip -->
+  <div id="tooltip" class="hidden tooltip"></div>
+
+  <!-- Script du projet -->
+  <script src="./src/script.js"></script>
 
 </body>
 

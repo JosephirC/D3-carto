@@ -1,35 +1,68 @@
 body {
     margin: 0;
-    position: fixed;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
+    font-family: Arial, sans-serif;
+    background: #f3f6fa;
+}
+
+header {
+    text-align: center;
+    padding: 20px 10px;
+    background: linear-gradient(90deg, #1a5faa, #1fa370);
+    color: white;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 26px;
+}
+
+header h2 {
+    margin: 5px 0 10px 0;
+    font-weight: 300;
+    font-size: 16px;
+}
+
+.authors {
+    font-size: 13px;
+    opacity: 0.9;
 }
 
 #controls {
-    position: absolute;
-    top: 10px;
-    left: 10px;
+    width: 300px;
+    margin: 20px auto 0 auto;
+    text-align: center;
     background: white;
     border: 1px solid #ccc;
-    padding: 8px 10px;
-    border-radius: 4px;
-    font-size: 14px;
-    opacity: 0.95;
+    padding: 12px 14px;
+    border-radius: 6px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
 }
 
-.hidden {
-    display: none;
+#map-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 40px;
 }
 
 .tooltip {
     position: absolute;
     background: white;
     border: 1px solid #aaa;
-    padding: 4px 8px;
-    font-size: 12px;
+    padding: 6px 10px;
     pointer-events: none;
-    opacity: 0.9;
-    border-radius: 3px;
+    opacity: 0.95;
+    border-radius: 4px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.hidden {
+    display: none;
+}
+
+#legend-container {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 13px;
+    color: #333;
 }
