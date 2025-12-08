@@ -32,16 +32,20 @@ d3.csv("./data/Tonnage_Decheterie.csv").then(function (data) {
     console.log("CSV rows:", data.length);
     console.log("First row:", data[0]);
 
-    const cleanData = data.filter(row =>
-        row.L_TYP_REG_DECHET === "DEEE" &&
-        row.ANNEE === anneeChoisie
+    const allDEEE = data.filter(row =>
+        row.L_TYP_REG_DECHET === "DEEE"
     );
 
-    console.log("Filtered rows:", cleanData.length);
-    console.log("Sample filtered:", cleanData.slice(0, 3));
+    console.log("Total DEEE rows:", allDEEE.length);
+    console.log("Sample DEEE:", allDEEE.slice(0, 3));
 
-    const minVal = d3.min(cleanData, d => parseFloat(d.TONNAGE_T.replace(",", ".")));
-    const maxVal = d3.max(cleanData, d => parseFloat(d.TONNAGE_T.replace(",", ".")));
+    const dataByDept = d3.group(allDEEE, d => d.C_DEPT);
+    const cleanDataYear = allDEEE.filter(row => row.ANNEE === anneeChoisie);
+    console.log("Filetered rows FOR YEAR", cleanDataYear.length);
+    console.log("Sample for year", cleanDataYear.slice(0, 3));
+
+    const minVal = d3.min(cleanDataYear, d => parseFloat(d.TONNAGE_T.replace(",", ".")));
+    const maxVal = d3.max(cleanDataYear, d => parseFloat(d.TONNAGE_T.replace(",", ".")));
 
     console.log("Min tonnage:", minVal);
     console.log("Max tonnage:", maxVal);
@@ -53,21 +57,21 @@ d3.csv("./data/Tonnage_Decheterie.csv").then(function (data) {
         console.log("GeoJSON features:", json.features.length);
         console.log("First feature:", json.features[0].properties);
 
-        for (let j = 0; j < json.features.length; j++) {
-            const departement = json.features[j].properties.code;
+        for (let f of json.features) {
+            const depCode = f.properties.code;
 
-            const anneeDepChoisi = cleanData.find(row =>
-                row.C_DEPT === departement
-            );
+            const lignesDep = dataByDept.get(depCode) || [];
 
-            if (anneeDepChoisi) {
-                json.features[j].properties.value =
-                    parseFloat(anneeDepChoisi.TONNAGE_T.replace(",", "."));
-            } else {
-                json.features[j].properties.value = 0;
-            }
+            f.properties.series = lignesDep.map(row => ({
+                annee: row.ANNEE,
+                valeur: parseFloat(row.TONNAGE_T.replace(",", "."))
+            }));
+
+            const ligneChoisie = f.properties.series.find(d => d.annee === anneeChoisie);
+            f.properties.value = ligneChoisie ? ligneChoisie.valeur : 0;
         }
 
+        console.log("Example series: ", json.features[0].properties.series);
         console.log("Example merged value:", json.features[0].properties.value);
 
         g.selectAll("path")
