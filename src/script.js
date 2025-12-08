@@ -29,6 +29,13 @@ let allDEEE;
 const tooltip = d3
     .select("#tooltip")
 
+const years = ["2009", "2011", "2013", "2015", "2017", "2019", "2021"];
+
+const slider = document.getElementById("slider");
+const yearLabel = document.getElementById("yearLabel");
+
+yearLabel.textContent = years[0];
+
 // Chargement des données
 d3.csv("./data/Tonnage_Decheterie.csv").then(function (data) {
     console.log("CSV rows:", data.length);
@@ -57,14 +64,12 @@ d3.csv("./data/Tonnage_Decheterie.csv").then(function (data) {
             }));
         }
         geojson = json;
-        drawMap("2009");
+        drawMap(years[0]);
     });
 });
 
 function drawMap(year) {
-
     console.log("drawMap for year: ", year);
-
     const values = [];
 
     for (let f of geojson.features) {
@@ -102,3 +107,12 @@ function drawMap(year) {
             tooltip.classed("hidden", true);
         });
 }
+
+// Gestion du slider
+slider.addEventListener("input", () => {
+    const index = Number(slider.value);
+    const year = years[index];
+
+    yearLabel.textContent = year;
+    drawMap(year);
+});
