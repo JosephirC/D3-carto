@@ -21,7 +21,6 @@ const color = d3
 
 const path = d3.geoPath().projection(projection);
 
-
 let geojson;
 let dataByDept;
 let allDEEE;
@@ -31,10 +30,7 @@ const tooltip = d3
 
 const years = ["2009", "2011", "2013", "2015", "2017", "2019", "2021"];
 
-const slider = document.getElementById("slider");
-const yearLabel = document.getElementById("yearLabel");
-
-yearLabel.textContent = years[0];
+d3.select("#day").html(years[0]);
 
 // Chargement des données
 d3.csv("./data/Tonnage_Decheterie.csv").then(function (data) {
@@ -108,11 +104,9 @@ function drawMap(year) {
         });
 }
 
-// Gestion du slider
-slider.addEventListener("input", () => {
-    const index = Number(slider.value);
-    const year = years[index];
-
-    yearLabel.textContent = year;
+// Listener du slider
+d3.select("#slider").on("input", function () {
+    const year = String(2009 + 2 * this.value);
+    d3.select("#day").html(year);
     drawMap(year);
 });
