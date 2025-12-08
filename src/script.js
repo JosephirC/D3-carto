@@ -1,83 +1,35 @@
+const width = 700;
+const height = 580;
 
-    var width = 700;
-    var height = 580;
+const svg = d3
+    .select("body")
+    .append("svg")
+    .attr("width", width)
+    .attr("height", height);
 
-    var svg = d3
-        .select("body")
-        .append("svg")
-        .attr("width", width)
-        .attr("height", height);
+// On rajoute un groupe englobant toute la visualisation pour plus tard
+const g = svg.append("g");
 
-    // On rajoute un groupe englobant toute la visualisation pour plus tard
-    var g = svg.append("g");
+const projection = d3
+    .geoConicConformal()
+    .center([2.454071, 46.279229])
+    .scale(2800)
+    .translate([width / 2, height / 2]);
 
-    // Autres projections : geoMercator, geoNaturalEarth1, ...
-    // https://github.com/d3/d3-geo/blob/master/README.md
-    var projection = d3
-        .geoAlbersUsa()
-        .translate([width / 2, height / 2])
-        .scale([500]);
+const color = d3
+    .scaleQuantize()
+    .range(["#edf8e9", "#bae4b3", "#74c476", "#31a354", "#006d2c"]);
 
-    // On definie une echelle de couleur
-    // via https://observablehq.com/@d3/color-schemes?collection=@d3/d3-scale-chromatic
-    var color = d3
-        .scaleQuantize()
-        .range(["#edf8e9", "#bae4b3", "#74c476", "#31a354", "#006d2c"]);
+const path = d3.geoPath().projection(projection);
 
-    var path = d3.geoPath().projection(projection);
+// Chargement des donnees
+d3.json("./data/departements-version-simplifiee.geojson").then(function (geojson) {
 
-    // Chargement des donnees
-    d3.csv("./data/us-ag-productivity-2004.csv").then(
-        function (data) {
-
-            //Set input domain for color scale
-            color.domain([
-                d3.min(data, function (d) {
-                    return d.value;
-                }),
-                d3.max(data, function (d) {
-                    return d.value;
-                })
-            ]);
-
-            d3.json("./data/us-states2.json").then(function (json) {
-                //On fusionne les donnees avec le GeoJSON
-                for (var i = 0; i < data.length; i++) {
-                    //Nom de l'etat
-                    var dataState = data[i].state;
-                    console.log(dataState);
-
-                    //Valeur associee a l'etat
-                    var dataValue = parseFloat(data[i].value);
-
-                    //Recherche de l'etat dans le GeoJSON
-                    for (var j = 0; j < json.features.length; j++) {
-                        var jsonState = json.features[j].properties.name;
-                        if (dataState == jsonState) {
-                        //On injecte la valeur de l'Etat dans le json
-                        json.features[j].properties.value = dataValue;
-
-                        //Pas besoin de chercher plus loin
-                        break;
-                        }
-                    }
-                }
-
-                g.selectAll("path")
-                    .data(json.features)
-                    .join("path")
-                    .attr("d", path)
-                    .style("fill", function (d) {
-
-                //on prend la valeur recupere plus haut
-                var value = d.properties.value;
-
-                if (value) {
-                    return color(value);
-                } else {
-                    // si pas de valeur alors en gris
-                    return "#ccc";
-                }
-                });
-            });
-        });
+    g.selectAll("path")
+        .data(geojson.features)
+        .join("path")
+        .attr("d", path)
+        .attr("fill", "#dcdcdc")
+        .attr("stroke", "white")
+        .attr("stroke-width", 0.5);
+});
