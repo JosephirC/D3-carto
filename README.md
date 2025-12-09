@@ -1,18 +1,18 @@
-# TP3 DataViz – Données spatiales avec D3.js
+# TP3 DataViz – Spatial Data with D3.js
 
-Visualisation interactive du tonnage de déchets DEEE collectés en déchèterie par département en France métropolitaine, entre 2009 et 2021.  
-La carte est réalisée avec D3.js à partir d'un fond de carte GeoJSON et d'un fichier CSV de l'ADEME, et propose un slider temporel, un tooltip et une légende de couleurs.
+Interactive visualization of DEEE waste tonnage collected in recycling centers by department in metropolitan France, between 2009 and 2021.  
+The map is built with D3.js using a GeoJSON basemap and an ADEME CSV dataset, and includes a time slider, a tooltip, and a color legend.
 
-## Dépôt
+## Repository
 
-Dépôt GitHub : <https://github.com/JosephirC/D3-carto>
+GitHub repository: <https://github.com/JosephirC/D3-carto>
 
-## Prérequis
+## Requirements
 
-- Node.js (version 18 ou supérieure recommandée)
+- Node.js (version 18 or higher recommended)
 - npm
 
-Vérification :
+Check installation:
 
 ```bash
 node -v
@@ -21,7 +21,7 @@ npm -v
 
 ## Installation
 
-Cloner le dépôt puis installer les dépendances :
+Clone the repository and install dependencies:
 
 ```bash
 git clone https://github.com/JosephirC/D3-carto.git
@@ -29,22 +29,21 @@ cd D3-carto
 npm install
 ```
 
-## Lancement du projet
-
+## Running the project
 
 ```bash
 npm run dev
 ```
 
-Une URL de type suivante sera affichée :
+An URL similar to the following will be displayed:
 
 ```text
 http://localhost:5173/
 ```
 
-Ouvrir cette URL dans un navigateur.
+Open this URL in a browser.
 
-## Auteurs
+## Authors
 
 - Youssef Abida (p2024398)  
 - Nathan Corroler (p2208035)
