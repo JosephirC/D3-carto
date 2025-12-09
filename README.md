@@ -47,3 +47,7 @@ Open this URL in a browser.
 
 - Youssef Abida (p2024398)  
 - Nathan Corroler (p2208035)
+
+---
+
+*Based on [TP 3](https://lyondataviz.github.io/teaching/lyon1-m2/2025/tp3.html)*
